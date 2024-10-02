@@ -165,6 +165,7 @@ func TestUpdateHandler(t *testing.T) {
 			handler(w, request)
 
 			res := w.Result()
+			defer res.Body.Close()
 			_, err := io.ReadAll(res.Body)
 			assert.NoError(t, err)
 
