@@ -148,6 +148,7 @@ func (m *MetricStorage) Send(client http.Client) error {
 		if err != nil{
 			return err
 		}
+		defer resp.Body.Close()
 		
 		respBody, err := io.ReadAll(resp.Body)
 		if err != nil{
