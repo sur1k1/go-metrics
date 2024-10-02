@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 )
 
 const (
@@ -28,10 +29,15 @@ func UpdateHandler(s Storage) http.HandlerFunc {
 			return
 		}
 	
-		// Парсинг значение в URL
-		metricType := r.PathValue("type")
-		metricName := r.PathValue("metric")
-		metricValue := r.PathValue("value")
+		// Парсинг значений в URL
+		urlParsed := strings.Split(strings.TrimPrefix(r.URL.String(), "/update/"), "/")
+		if len(urlParsed) != 3{
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		metricType := urlParsed[0]
+		metricName := urlParsed[1]
+		metricValue := urlParsed[2]
 	
 		// Валидация имени метрики
 		if metricName == "" {
