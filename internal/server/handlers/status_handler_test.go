@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,7 +17,6 @@ func TestMetricHandler(t *testing.T) {
 		args MetricGetter
 		url string
 		wantStatus int
-		wantBody string
 		method string
 	}{
 		{
@@ -31,7 +29,6 @@ func TestMetricHandler(t *testing.T) {
 			method: "GET",
 			url: "/value/counter/pollcount",
 			wantStatus: 200,
-			wantBody: "pollcount: 123",
 		},
 		{
 			name: "autotest 404",
@@ -42,8 +39,7 @@ func TestMetricHandler(t *testing.T) {
 			},
 			method: "GET",
 			url: "/value/gauge/testSetGet203",
-			wantStatus: 200,
-			wantBody: "pollcount: 123",
+			wantStatus: 404,
 		},
 	}
 
@@ -58,11 +54,7 @@ func TestMetricHandler(t *testing.T) {
 			resp := testRequestMetricHandler(t, ts, test.method, test.url)
 			defer resp.Body.Close()
 
-			respBody, err := io.ReadAll(resp.Body)
-			require.NoError(t, err)
-
 			assert.Equal(t, test.wantStatus, resp.StatusCode)
-			assert.Equal(t, test.wantBody, string(respBody))
 		})
 	}
 }

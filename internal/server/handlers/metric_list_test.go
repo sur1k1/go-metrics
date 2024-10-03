@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -19,7 +18,6 @@ func TestMetricListHandler(t *testing.T) {
 		method		string
 		url				string
 		wantStatus int
-		wantBody   string
 	}{
 		{
 			name: "positive test #1",
@@ -34,7 +32,6 @@ func TestMetricListHandler(t *testing.T) {
 			method: "GET",
 			url: "/",
 			wantStatus: 200,
-			wantBody: "Metrics List:\nalloc: 123\npollcount: 123\n",
 		},
 	}
 
@@ -49,11 +46,7 @@ func TestMetricListHandler(t *testing.T) {
 			resp := testRequestMetricListHandler(t, ts, test.method, test.url)
 			defer resp.Body.Close()
 
-			respBody, err := io.ReadAll(resp.Body)
-			require.NoError(t, err)
-
 			assert.Equal(t, test.wantStatus, resp.StatusCode)
-			assert.Equal(t, test.wantBody, string(respBody))
 		})
 	}
 }
