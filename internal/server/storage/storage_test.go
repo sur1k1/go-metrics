@@ -314,7 +314,7 @@ func TestGetMetric(t *testing.T) {
 				metricType: "gauge",
 				metricName: "alloc",
 			},
-			want:    "123.000",
+			want:    "123",
 			wantErr: false,
 		},
 		{
@@ -352,7 +352,7 @@ func TestGetMetric(t *testing.T) {
 				metricType: "gauge",
 				metricName: "alloc",
 			},
-			want:    "123.000",
+			want:    "123",
 			wantErr: false,
 		},
 		// {
@@ -401,7 +401,7 @@ func TestGetAllMetrics(t *testing.T) {
 				},
 			},
 			want: map[string]string{
-				"alloc": "123.000",
+				"alloc": "123",
 				"pollcount": "123",
 			},
 		},

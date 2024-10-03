@@ -54,7 +54,7 @@ func (s *MemStorage) GetMetric(metricType, metricName string) (string, error) {
 			return "", errors.New("metric not found")
 		}
 
-		return strconv.FormatFloat(value, 'f', 3, 64), nil
+		return strconv.FormatFloat(value, 'f', -1, 64), nil
 	case Counter:
 		value, ok := s.CounterMap[strings.ToLower(metricName)]
 		if !ok {
@@ -71,7 +71,7 @@ func (s *MemStorage) GetAllMetrics() map[string]string {
 	metrics := make(map[string]string)
 
 	for name, value := range s.GaugeMap{
-		metrics[name] = strconv.FormatFloat(value, 'f', 3, 64)
+		metrics[name] = strconv.FormatFloat(value, 'f', -1, 64)
 	}
 
 	for name, value := range s.CounterMap{

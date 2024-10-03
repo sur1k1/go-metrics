@@ -34,7 +34,7 @@ func TestMetricListHandler(t *testing.T) {
 			method: "GET",
 			url: "/",
 			wantStatus: 200,
-			wantBody: "Metrics List:\nalloc: 123.000\npollcount: 123\n",
+			wantBody: "Metrics List:\nalloc: 123\npollcount: 123\n",
 		},
 	}
 
