@@ -165,7 +165,7 @@ func TestUpdateHandler(t *testing.T) {
 			ts := httptest.NewServer(r)
 			defer ts.Close()
 			
-			resp := testRequest_UpdateHandler(t, ts, test.method, test.url, test.header.key, test.header.value)
+			resp := testRequestUpdateHandler(t, ts, test.method, test.url, test.header.key, test.header.value)
 			defer resp.Body.Close()
 
 			assert.Equal(t, test.wantStatus, resp.StatusCode)
@@ -173,7 +173,7 @@ func TestUpdateHandler(t *testing.T) {
 	}
 }
 
-func testRequest_UpdateHandler(t *testing.T, ts *httptest.Server, method, path, headerKey, headerValue string) *http.Response {
+func testRequestUpdateHandler(t *testing.T, ts *httptest.Server, method, path, headerKey, headerValue string) *http.Response {
 	req, err := http.NewRequest(method, ts.URL+path, nil)
 	req.Header.Set(headerKey, headerValue)
 	require.NoError(t, err)

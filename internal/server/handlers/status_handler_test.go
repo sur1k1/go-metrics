@@ -43,7 +43,7 @@ func TestMetricHandler(t *testing.T) {
 			ts := httptest.NewServer(r)
 			defer ts.Close()
 
-			resp := testRequest_MetricHandler(t, ts, test.method, test.url)
+			resp := testRequestMetricHandler(t, ts, test.method, test.url)
 			defer resp.Body.Close()
 
 			respBody, err := io.ReadAll(resp.Body)
@@ -55,7 +55,7 @@ func TestMetricHandler(t *testing.T) {
 	}
 }
 
-func testRequest_MetricHandler(t *testing.T, ts *httptest.Server, method, path string) *http.Response {
+func testRequestMetricHandler(t *testing.T, ts *httptest.Server, method, path string) *http.Response {
 	req, err := http.NewRequest(method, ts.URL+path, nil)
 
 	require.NoError(t, err)

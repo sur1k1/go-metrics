@@ -34,7 +34,7 @@ func TestMetricListHandler(t *testing.T) {
 			method: "GET",
 			url: "/",
 			wantStatus: 200,
-			wantBody: "Metrics List:\nalloc: 123.0\npollcount: 123\n",
+			wantBody: "Metrics List:\nalloc: 123.000\npollcount: 123\n",
 		},
 	}
 
@@ -46,7 +46,7 @@ func TestMetricListHandler(t *testing.T) {
 			ts := httptest.NewServer(r)
 			defer ts.Close()
 
-			resp := testRequest_MetricListHandler(t, ts, test.method, test.url)
+			resp := testRequestMetricListHandler(t, ts, test.method, test.url)
 			defer resp.Body.Close()
 
 			respBody, err := io.ReadAll(resp.Body)
@@ -58,7 +58,7 @@ func TestMetricListHandler(t *testing.T) {
 	}
 }
 
-func testRequest_MetricListHandler(t *testing.T, ts *httptest.Server, method, path string) *http.Response {
+func testRequestMetricListHandler(t *testing.T, ts *httptest.Server, method, path string) *http.Response {
 	req, err := http.NewRequest(method, ts.URL+path, nil)
 	require.NoError(t, err)
 
