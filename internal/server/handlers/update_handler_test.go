@@ -1,11 +1,13 @@
 package handlers
 
 import (
-	"io"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/sur1k1/go-metrics/internal/server/storage"
 )
 
@@ -157,22 +159,27 @@ func TestUpdateHandler(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			ts := httptest.NewServer(UpdateHandler(test.args.s))
+			r := chi.NewRouter()
+			r.Post("/update/{type}/{metric}/{value}", UpdateHandler(test.args.s))
+
+			ts := httptest.NewServer(r)
 			defer ts.Close()
 			
-			request := httptest.NewRequest(test.method, test.url, nil)
-			request.Header.Set(test.header.key, test.header.value)
-			w := httptest.NewRecorder()
+			resp := testRequest_UpdateHandler(t, ts, test.method, test.url, test.header.key, test.header.value)
+			defer resp.Body.Close()
 
-			handler := UpdateHandler(test.args.s)
-			handler(w, request)
-
-			res := w.Result()
-			defer res.Body.Close()
-			_, err := io.ReadAll(res.Body)
-			assert.NoError(t, err)
-
-			assert.Equal(t, test.wantStatus, res.StatusCode)
+			assert.Equal(t, test.wantStatus, resp.StatusCode)
 		})
 	}
+}
+
+func testRequest_UpdateHandler(t *testing.T, ts *httptest.Server, method, path, headerKey, headerValue string) *http.Response {
+	req, err := http.NewRequest(method, ts.URL+path, nil)
+	req.Header.Set(headerKey, headerValue)
+	require.NoError(t, err)
+
+	resp, err := ts.Client().Do(req)
+	require.NoError(t, err)
+
+	return resp
 }

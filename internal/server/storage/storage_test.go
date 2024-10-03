@@ -23,11 +23,11 @@ func TestAddGauge(t *testing.T) {
 			name: "simple test #1",
 			storage: &MemStorage{
 				GaugeMap: map[string]float64{
-					"Alloc": 209.0,
+					"alloc": 209.0,
 				},
 			},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "203.0",
 			},
 			wantErr: false,
@@ -36,7 +36,7 @@ func TestAddGauge(t *testing.T) {
 			name:    "big float value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "922337203685477580000007.0",
 			},
 			wantErr: false,
@@ -45,7 +45,7 @@ func TestAddGauge(t *testing.T) {
 			name:    "big int value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "9223372036854775800000070",
 			},
 			wantErr: false,
@@ -54,7 +54,7 @@ func TestAddGauge(t *testing.T) {
 			name:    "negative big float value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "-922337203685477580000007.0",
 			},
 			wantErr: false,
@@ -63,7 +63,7 @@ func TestAddGauge(t *testing.T) {
 			name:    "negative big int value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "-9223372036854775800000070",
 			},
 			wantErr: false,
@@ -72,7 +72,7 @@ func TestAddGauge(t *testing.T) {
 			name:    "zero int value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "0",
 			},
 			wantErr: false,
@@ -81,7 +81,7 @@ func TestAddGauge(t *testing.T) {
 			name:    "zero float value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "0.0",
 			},
 			wantErr: false,
@@ -90,7 +90,7 @@ func TestAddGauge(t *testing.T) {
 			name:    "negative zero int value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "-0",
 			},
 			wantErr: false,
@@ -99,7 +99,7 @@ func TestAddGauge(t *testing.T) {
 			name:    "negative zero float value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "-0.0",
 			},
 			wantErr: false,
@@ -108,7 +108,7 @@ func TestAddGauge(t *testing.T) {
 			name:    "string value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name:  "Alloc",
+				name:  "alloc",
 				value: "hello world!",
 			},
 			wantErr: true,
@@ -146,11 +146,11 @@ func TestAddCounter(t *testing.T) {
 			name: "simple test #1",
 			storage: &MemStorage{
 				CounterMap: map[string]int64{
-					"PollCount": 203,
+					"pollcount": 203,
 				},
 			},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "203",
 			},
 			wantErr:   false,
@@ -159,10 +159,10 @@ func TestAddCounter(t *testing.T) {
 		{
 			name: "big float value test",
 			storage: &MemStorage{CounterMap: map[string]int64{
-				"PollCount": 92233720368547758,
+				"pollcount": 92233720368547758,
 			}},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "92233720368547758.6",
 			},
 			wantErr:   true,
@@ -171,10 +171,10 @@ func TestAddCounter(t *testing.T) {
 		{
 			name: "big int value test",
 			storage: &MemStorage{CounterMap: map[string]int64{
-				"PollCount": 922337203685477580,
+				"pollcount": 922337203685477580,
 			}},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "922337203685477580",
 			},
 			wantErr:   false,
@@ -183,10 +183,10 @@ func TestAddCounter(t *testing.T) {
 		{
 			name: "negative big float value test",
 			storage: &MemStorage{CounterMap: map[string]int64{
-				"PollCount": 9223372036854775807,
+				"pollcount": 9223372036854775807,
 			}},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "-9223372036854775807.9",
 			},
 			wantErr:   true,
@@ -195,10 +195,10 @@ func TestAddCounter(t *testing.T) {
 		{
 			name: "negative big int value test",
 			storage: &MemStorage{CounterMap: map[string]int64{
-				"PollCount": 9223372036854775807,
+				"pollcount": 9223372036854775807,
 			}},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "-9223372036854775807",
 			},
 			wantErr:   false,
@@ -207,10 +207,10 @@ func TestAddCounter(t *testing.T) {
 		{
 			name: "zero int value test",
 			storage: &MemStorage{CounterMap: map[string]int64{
-				"PollCount": 5,
+				"pollcount": 5,
 			}},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "0",
 			},
 			wantErr:   false,
@@ -219,10 +219,10 @@ func TestAddCounter(t *testing.T) {
 		{
 			name: "zero float value test",
 			storage: &MemStorage{CounterMap: map[string]int64{
-				"PollCount": 9223372036854775807,
+				"pollcount": 9223372036854775807,
 			}},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "0.8",
 			},
 			wantErr:   true,
@@ -231,10 +231,10 @@ func TestAddCounter(t *testing.T) {
 		{
 			name: "negative zero int value test",
 			storage: &MemStorage{CounterMap: map[string]int64{
-				"PollCount": 6,
+				"pollcount": 6,
 			}},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "-0",
 			},
 			wantErr:   false,
@@ -243,10 +243,10 @@ func TestAddCounter(t *testing.T) {
 		{
 			name: "negative zero float value test",
 			storage: &MemStorage{CounterMap: map[string]int64{
-				"PollCount": 0,
+				"pollcount": 0,
 			}},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "-0.2",
 			},
 			wantErr:   true,
@@ -256,7 +256,7 @@ func TestAddCounter(t *testing.T) {
 			name:    "string value test",
 			storage: &MemStorage{CounterMap: map[string]int64{}},
 			metric: metric{
-				name:  "PollCount",
+				name:  "pollcount",
 				value: "hello world!",
 			},
 			wantErr: true,
@@ -350,7 +350,7 @@ func TestGetMetric(t *testing.T) {
 			},
 			metric: metric{
 				metricType: "gauge",
-				metricName: "ALLOC",
+				metricName: "alloc",
 			},
 			want:    "123.0",
 			wantErr: false,
