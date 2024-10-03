@@ -3,6 +3,7 @@ package storage
 import (
 	"errors"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -30,7 +31,7 @@ func (s *MemStorage) AddGauge(metricName, value string) error {
 		return err
 	}
 
-	s.GaugeMap[metricName] = floatValue
+	s.GaugeMap[strings.ToLower(metricName)] = floatValue
 	return nil
 }
 
@@ -41,21 +42,21 @@ func (s *MemStorage) AddCounter(metricName, value string) error {
 		return err
 	}
 
-	s.CounterMap[metricName] += intValue
+	s.CounterMap[strings.ToLower(metricName)] += intValue
 	return nil
 }
 
 func (s *MemStorage) GetMetric(metricType, metricName string) (string, error) {
 	switch metricType{
 	case Gauge:
-		value, ok := s.GaugeMap[metricName]
+		value, ok := s.GaugeMap[strings.ToLower(metricName)]
 		if !ok {
 			return "", errors.New("metric not found")
 		}
 
-		return strconv.FormatFloat(value, 'f', 6, 64), nil
+		return strconv.FormatFloat(value, 'f', 1, 64), nil
 	case Counter:
-		value, ok := s.CounterMap[metricName]
+		value, ok := s.CounterMap[strings.ToLower(metricName)]
 		if !ok {
 			return "", errors.New("metric not found")
 		}
@@ -70,7 +71,7 @@ func (s *MemStorage) GetAllMetrics() map[string]string {
 	metrics := make(map[string]string)
 
 	for name, value := range s.GaugeMap{
-		metrics[name] = strconv.FormatFloat(value, 'f', 6, 64)
+		metrics[name] = strconv.FormatFloat(value, 'f', 1, 64)
 	}
 
 	for name, value := range s.CounterMap{

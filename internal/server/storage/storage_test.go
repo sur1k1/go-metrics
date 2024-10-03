@@ -8,117 +8,117 @@ import (
 )
 
 func TestAddGauge(t *testing.T) {
-	type metric struct{
-		name string
+	type metric struct {
+		name  string
 		value string
 	}
 
-	tests := []struct{
-		name string
+	tests := []struct {
+		name    string
 		storage *MemStorage
-		metric metric
+		metric  metric
 		wantErr bool
 	}{
 		{
 			name: "simple test #1",
 			storage: &MemStorage{
 				GaugeMap: map[string]float64{
-					"Alloc":209.0,
+					"Alloc": 209.0,
 				},
 			},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "203.0",
 			},
 			wantErr: false,
 		},
 		{
-			name: "big float value test",
+			name:    "big float value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "922337203685477580000007.0",
 			},
 			wantErr: false,
 		},
 		{
-			name: "big int value test",
+			name:    "big int value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "9223372036854775800000070",
 			},
 			wantErr: false,
 		},
 		{
-			name: "negative big float value test",
+			name:    "negative big float value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "-922337203685477580000007.0",
 			},
 			wantErr: false,
 		},
 		{
-			name: "negative big int value test",
+			name:    "negative big int value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "-9223372036854775800000070",
 			},
 			wantErr: false,
 		},
 		{
-			name: "zero int value test",
+			name:    "zero int value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "0",
 			},
 			wantErr: false,
 		},
 		{
-			name: "zero float value test",
+			name:    "zero float value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "0.0",
 			},
 			wantErr: false,
 		},
 		{
-			name: "negative zero int value test",
+			name:    "negative zero int value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "-0",
 			},
 			wantErr: false,
 		},
 		{
-			name: "negative zero float value test",
+			name:    "negative zero float value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "-0.0",
 			},
 			wantErr: false,
 		},
 		{
-			name: "string value test",
+			name:    "string value test",
 			storage: &MemStorage{GaugeMap: map[string]float64{}},
 			metric: metric{
-				name: "Alloc",
+				name:  "Alloc",
 				value: "hello world!",
 			},
 			wantErr: true,
 		},
 	}
 
-	for _, test := range tests{
+	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			err := test.storage.AddGauge(test.metric.name, test.metric.value)
-			if !test.wantErr{
+			if !test.wantErr {
 				require.NoError(t, err)
 
 				assert.Contains(t, test.storage.GaugeMap, test.metric.name)
@@ -130,16 +130,16 @@ func TestAddGauge(t *testing.T) {
 }
 
 func TestAddCounter(t *testing.T) {
-	type metric struct{
-		name string
+	type metric struct {
+		name  string
 		value string
 	}
 
-	tests := []struct{
-		name string
-		storage *MemStorage
-		metric metric
-		wantErr bool
+	tests := []struct {
+		name      string
+		storage   *MemStorage
+		metric    metric
+		wantErr   bool
 		wantValue int64
 	}{
 		{
@@ -150,10 +150,10 @@ func TestAddCounter(t *testing.T) {
 				},
 			},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "203",
 			},
-			wantErr: false,
+			wantErr:   false,
 			wantValue: 406,
 		},
 		{
@@ -162,11 +162,11 @@ func TestAddCounter(t *testing.T) {
 				"PollCount": 92233720368547758,
 			}},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "92233720368547758.6",
 			},
-			wantErr: true,
-			wantValue: int64(2*92233720368547758),
+			wantErr:   true,
+			wantValue: int64(2 * 92233720368547758),
 		},
 		{
 			name: "big int value test",
@@ -174,11 +174,11 @@ func TestAddCounter(t *testing.T) {
 				"PollCount": 922337203685477580,
 			}},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "922337203685477580",
 			},
-			wantErr: false,
-			wantValue: int64(2*922337203685477580),
+			wantErr:   false,
+			wantValue: int64(2 * 922337203685477580),
 		},
 		{
 			name: "negative big float value test",
@@ -186,10 +186,10 @@ func TestAddCounter(t *testing.T) {
 				"PollCount": 9223372036854775807,
 			}},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "-9223372036854775807.9",
 			},
-			wantErr: true,
+			wantErr:   true,
 			wantValue: 0,
 		},
 		{
@@ -198,10 +198,10 @@ func TestAddCounter(t *testing.T) {
 				"PollCount": 9223372036854775807,
 			}},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "-9223372036854775807",
 			},
-			wantErr: false,
+			wantErr:   false,
 			wantValue: 0,
 		},
 		{
@@ -210,10 +210,10 @@ func TestAddCounter(t *testing.T) {
 				"PollCount": 5,
 			}},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "0",
 			},
-			wantErr: false,
+			wantErr:   false,
 			wantValue: 5,
 		},
 		{
@@ -222,10 +222,10 @@ func TestAddCounter(t *testing.T) {
 				"PollCount": 9223372036854775807,
 			}},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "0.8",
 			},
-			wantErr: true,
+			wantErr:   true,
 			wantValue: 9223372036854775807,
 		},
 		{
@@ -234,10 +234,10 @@ func TestAddCounter(t *testing.T) {
 				"PollCount": 6,
 			}},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "-0",
 			},
-			wantErr: false,
+			wantErr:   false,
 			wantValue: 6,
 		},
 		{
@@ -246,33 +246,170 @@ func TestAddCounter(t *testing.T) {
 				"PollCount": 0,
 			}},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "-0.2",
 			},
-			wantErr: true,
+			wantErr:   true,
 			wantValue: 0,
 		},
 		{
-			name: "string value test",
+			name:    "string value test",
 			storage: &MemStorage{CounterMap: map[string]int64{}},
 			metric: metric{
-				name: "PollCount",
+				name:  "PollCount",
 				value: "hello world!",
 			},
 			wantErr: true,
 		},
 	}
 
-	for _, test := range tests{
+	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			err := test.storage.AddCounter(test.metric.name, test.metric.value)
-			if !test.wantErr{
+			if !test.wantErr {
 				require.NoError(t, err)
 
 				assert.Equal(t, test.wantValue, test.storage.CounterMap[test.metric.name])
 				return
 			}
 			assert.Error(t, err)
+		})
+	}
+}
+
+func TestGetMetric(t *testing.T) {
+	type metric struct {
+		metricType, metricName string
+	}
+
+	tests := []struct {
+		name    string
+		storage *MemStorage
+		metric  metric
+		wantErr bool
+		want    string
+	}{
+		{
+			name: "get counter metric",
+			storage: &MemStorage{
+				CounterMap: map[string]int64{
+					"pollcount": 123,
+				},
+			},
+			metric: metric{
+				metricType: "counter",
+				metricName: "pollcount",
+			},
+			want:    "123",
+			wantErr: false,
+		},
+		{
+			name: "get gauge metric",
+			storage: &MemStorage{
+				GaugeMap: map[string]float64{
+					"alloc": 123.0,
+				},
+			},
+			metric: metric{
+				metricType: "gauge",
+				metricName: "alloc",
+			},
+			want:    "123.0",
+			wantErr: false,
+		},
+		{
+			name: "get metric with invalid type",
+			storage: &MemStorage{
+				GaugeMap: map[string]float64{},
+			},
+			metric: metric{
+				metricType: "gofer go",
+				metricName: "alloc",
+			},
+			want:    "",
+			wantErr: true,
+		},
+		{
+			name: "get metric with invalid name",
+			storage: &MemStorage{
+				GaugeMap: map[string]float64{},
+			},
+			metric: metric{
+				metricType: "",
+				metricName: "A)_S))S)D)AS)D)",
+			},
+			want:    "",
+			wantErr: true,
+		},
+		{
+			name: "get metric with CAPS name",
+			storage: &MemStorage{
+				GaugeMap: map[string]float64{
+					"alloc": 123.0,
+				},
+			},
+			metric: metric{
+				metricType: "gauge",
+				metricName: "ALLOC",
+			},
+			want:    "123.0",
+			wantErr: false,
+		},
+		// {
+		// 	name: "get metric with CAPS type",
+		// 	storage: &MemStorage{
+		// 		GaugeMap: map[string]float64{
+		// 			"alloc": 123.0,
+		// 		},
+		// 	},
+		// 	metric: metric{
+		// 		metricType: "GAUGE",
+		// 		metricName: "alloc",
+		// 	},
+		// 	want: "123.000000",
+		// 	wantErr: false,
+		// },
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			value, err := test.storage.GetMetric(test.metric.metricType, test.metric.metricName)
+			if !test.wantErr {
+				assert.NoError(t, err)
+				assert.Equal(t, test.want, value)
+				return
+			}
+			assert.Error(t, err)
+		})
+	}
+}
+
+func TestGetAllMetrics(t *testing.T) {
+	tests := []struct {
+		name string
+		s    *MemStorage
+		want map[string]string
+	}{
+		{
+			name: "positive test #1",
+			s: &MemStorage{
+				GaugeMap: map[string]float64{
+					"alloc": 123.0,
+				},
+				CounterMap: map[string]int64{
+					"pollcount": 123,
+				},
+			},
+			want: map[string]string{
+				"alloc": "123.0",
+				"pollcount": "123",
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			metrics := test.s.GetAllMetrics()
+			assert.Equal(t, test.want, metrics)
 		})
 	}
 }
