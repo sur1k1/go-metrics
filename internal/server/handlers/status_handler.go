@@ -35,6 +35,6 @@ func MetricHandler(m MetricGetter) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%s: %s", metricName, value)
+		fmt.Fprintf(w, "%s", value)
 	}
 }
