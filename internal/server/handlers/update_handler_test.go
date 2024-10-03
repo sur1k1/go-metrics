@@ -60,22 +60,22 @@ func TestUpdateHandler(t *testing.T) {
 			method: "POST",
 			wantStatus: 200,
 		},
-		{
-			name: "invalid content type test",
-			args: args{
-				s: &storage.MemStorage{
-					GaugeMap: map[string]float64{},
-					CounterMap: map[string]int64{},
-				},
-			},
-			url: "/update/counter/pollCount/123",
-			header: header{
-				key: "Content-Type",
-				value: "text/html",
-			},
-			method: "POST",
-			wantStatus: 415,
-		},
+		// {
+		// 	name: "invalid content type test",
+		// 	args: args{
+		// 		s: &storage.MemStorage{
+		// 			GaugeMap: map[string]float64{},
+		// 			CounterMap: map[string]int64{},
+		// 		},
+		// 	},
+		// 	url: "/update/counter/pollCount/123",
+		// 	header: header{
+		// 		key: "Content-Type",
+		// 		value: "text/html",
+		// 	},
+		// 	method: "POST",
+		// 	wantStatus: 415,
+		// },
 		{
 			name: "invalid requst method (GET) test",
 			args: args{
@@ -155,6 +155,22 @@ func TestUpdateHandler(t *testing.T) {
 			},
 			method: "POST",
 			wantStatus: 404,
+		},
+		{
+			name: "autotest #1",
+			args: args{
+				s: &storage.MemStorage{
+					GaugeMap: map[string]float64{},
+					CounterMap: map[string]int64{},
+				},
+			},
+			url: "/update/counter/testSetGet81/436",
+			header: header{
+				key: "Content-Type",
+				value: "text/plain",
+			},
+			method: "POST",
+			wantStatus: 200,
 		},
 	}
 	for _, test := range tests {

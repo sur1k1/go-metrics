@@ -24,11 +24,11 @@ func UpdateHandler(s Storage) http.HandlerFunc {
 			return
 		}
 	
-		// Проверка параметра content-type
-		if r.Header.Get("Content-Type") != "text/plain" {
-			w.WriteHeader(http.StatusUnsupportedMediaType)
-			return
-		}
+		// // Проверка параметра content-type
+		// if r.Header.Get("Content-Type") != "text/plain" {
+		// 	w.WriteHeader(http.StatusUnsupportedMediaType)
+		// 	return
+		// }
 
 		metricType := chi.URLParam(r, "type")
 		metricName := chi.URLParam(r, "metric")

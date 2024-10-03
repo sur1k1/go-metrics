@@ -33,6 +33,18 @@ func TestMetricHandler(t *testing.T) {
 			wantStatus: 200,
 			wantBody: "pollcount: 123",
 		},
+		{
+			name: "autotest 404",
+			args: &storage.MemStorage{
+				CounterMap: map[string]int64{
+					"pollcount": 123,
+				},
+			},
+			method: "GET",
+			url: "/value/gauge/testSetGet203",
+			wantStatus: 200,
+			wantBody: "pollcount: 123",
+		},
 	}
 
 	for _, test := range tests{
