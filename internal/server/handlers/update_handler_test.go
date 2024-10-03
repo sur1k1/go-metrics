@@ -157,6 +157,9 @@ func TestUpdateHandler(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			ts := httptest.NewServer(UpdateHandler(test.args.s))
+			defer ts.Close()
+			
 			request := httptest.NewRequest(test.method, test.url, nil)
 			request.Header.Set(test.header.key, test.header.value)
 			w := httptest.NewRecorder()

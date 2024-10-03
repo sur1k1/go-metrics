@@ -1,13 +1,14 @@
 package storage
 
 import (
+	"errors"
 	"strconv"
 )
 
-type Storage interface {
-	AddGauge(string, string) error
-	AddCounter(string, string) error
-}
+const (
+	Gauge = string("gauge")
+	Counter = string("counter")
+)
 
 type MemStorage struct {
 	GaugeMap   map[string]float64
@@ -42,4 +43,39 @@ func (s *MemStorage) AddCounter(metricName, value string) error {
 
 	s.CounterMap[metricName] += intValue
 	return nil
+}
+
+func (s *MemStorage) GetMetric(metricType, metricName string) (string, error) {
+	switch metricType{
+	case Gauge:
+		value, ok := s.GaugeMap[metricName]
+		if !ok {
+			return "", errors.New("metric not found")
+		}
+
+		return strconv.FormatFloat(value, 'f', 6, 64), nil
+	case Counter:
+		value, ok := s.CounterMap[metricName]
+		if !ok {
+			return "", errors.New("metric not found")
+		}
+
+		return strconv.FormatInt(value, 10), nil
+	}
+
+	return "", errors.New("invalid metric type")
+}
+
+func (s *MemStorage) GetAllMetrics() map[string]string {
+	metrics := make(map[string]string)
+
+	for name, value := range s.GaugeMap{
+		metrics[name] = strconv.FormatFloat(value, 'f', 6, 64)
+	}
+
+	for name, value := range s.CounterMap{
+		metrics[name] = strconv.FormatInt(value, 10)
+	}
+
+	return metrics
 }

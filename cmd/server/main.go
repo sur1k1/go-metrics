@@ -3,21 +3,28 @@ package main
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/sur1k1/go-metrics/internal/server/handlers"
 	"github.com/sur1k1/go-metrics/internal/server/storage"
 )
 
 func main() {
 	s := storage.NewStorage()
+	router := chi.NewRouter()
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/update/{type}/{metric}/{value}", handlers.UpdateHandler(s))
+	router.Post("/update/{type}/{metric}/{value}", handlers.UpdateHandler(s))
+	router.Get("/value/{type}/{metric}", handlers.MetricHandler(s))
+	router.Get("/", handlers.MetricListHandler(s))
 
-	if err := run(mux); err != nil{
+	if err := run(router); err != nil{
 		panic(err)
 	}
 }
 
-func run(mux *http.ServeMux) error {
-	return http.ListenAndServe(`:8080`, mux)
+func run(router *chi.Mux) error {
+	srv := &http.Server{
+		Addr: `:8080`,
+		Handler: router,
+	}
+	return srv.ListenAndServe()
 }

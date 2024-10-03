@@ -129,11 +129,10 @@ func (m *MetricStorage) Send(client http.Client) error {
 		}
 		defer resp.Body.Close()
 		
-		respBody, err := io.ReadAll(resp.Body)
+		_, err = io.ReadAll(resp.Body)
 		if err != nil{
 			return err
 		}
-		log.Println(string(respBody), resp.StatusCode)
 	}
 
 	for name, value := range m.CounterMap{

@@ -2,7 +2,8 @@ package handlers
 
 import (
 	"net/http"
-	"strings"
+
+	"github.com/go-chi/chi/v5"
 )
 
 const (
@@ -28,16 +29,10 @@ func UpdateHandler(s Storage) http.HandlerFunc {
 			w.WriteHeader(http.StatusUnsupportedMediaType)
 			return
 		}
-	
-		// Парсинг значений в URL
-		urlParsed := strings.Split(strings.TrimPrefix(r.URL.String(), "/update/"), "/")
-		if len(urlParsed) != 3{
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		metricType := urlParsed[0]
-		metricName := urlParsed[1]
-		metricValue := urlParsed[2]
+
+		metricType := chi.URLParam(r, "type")
+		metricName := chi.URLParam(r, "metric")
+		metricValue := chi.URLParam(r, "value")
 	
 		// Валидация имени метрики
 		if metricName == "" {
@@ -53,6 +48,7 @@ func UpdateHandler(s Storage) http.HandlerFunc {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
 			return
 		case Counter:
@@ -61,6 +57,7 @@ func UpdateHandler(s Storage) http.HandlerFunc {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
 			return
 		default:
