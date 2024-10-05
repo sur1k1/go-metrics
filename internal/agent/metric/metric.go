@@ -8,15 +8,14 @@ import (
 	"net/http"
 	"runtime"
 	"time"
+
+	"github.com/sur1k1/go-metrics/internal/agent/config"
 )
 
 const (
-	serverAddress		string = "localhost:8080"
 	reportForm			string = "http://%s/update/%s/%s/%v"
 	typeGauge				string = "gauge"
 	typeCounter			string = "counter"
-	pollInterval   	time.Duration = 2
-	reportInterval 	time.Duration = 10
 )
 
 // Временное хранилище метрик
@@ -46,11 +45,11 @@ type MetricUpdaterIntf interface {
 }
 
 // Получение обновление по pollInterval
-func MetricUpdater(mu MetricUpdaterIntf) {
+func MetricUpdater(mu MetricUpdaterIntf, flagOpts *config.AgentOptions) {
 	for {
 		mu.UpdateCounter()
 		mu.UpdateGauge()
-		time.Sleep(time.Second*pollInterval)
+		time.Sleep(time.Second*time.Duration(flagOpts.PollInterval))
 	}
 }
 
@@ -96,27 +95,27 @@ func (m *MetricStorage) UpdateCounter() {
 
 // Интерфейс отправки метрик
 type MetricSenderIntf interface {
-	Send(client http.Client) error
+	Send(client http.Client, addr string) error
 }
 
 // Отправка метрик на сервер по reportInterval
-func MetricSender(ms MetricSenderIntf) {
+func MetricSender(ms MetricSenderIntf, flagOpts *config.AgentOptions) {
 	var client http.Client
 	for {
-		err := ms.Send(client)
+		err := ms.Send(client, flagOpts.AddressServer)
 		if err != nil{
 			log.Println(err)
 			continue
 		}
 
-		time.Sleep(time.Second*reportInterval)
+		time.Sleep(time.Second*time.Duration(flagOpts.ReportInterval))
 	}
 }
 
 // Фнкция отправки метрик на сервер
-func (m *MetricStorage) Send(client http.Client) error {
+func (m *MetricStorage) Send(client http.Client, addr string) error {
 	for name, value := range m.GaugeMap{
-		url := fmt.Sprintf(reportForm, serverAddress, typeGauge, name, value)
+		url := fmt.Sprintf(reportForm, addr, typeGauge, name, value)
 		req, err := http.NewRequest("POST", url, nil)
 		if err != nil{
 			return err
@@ -136,7 +135,7 @@ func (m *MetricStorage) Send(client http.Client) error {
 	}
 
 	for name, value := range m.CounterMap{
-		url := fmt.Sprintf(reportForm, serverAddress, typeCounter, name, value)
+		url := fmt.Sprintf(reportForm, addr, typeCounter, name, value)
 		req, err := http.NewRequest("POST", url, nil)
 		if err != nil{
 			return err
