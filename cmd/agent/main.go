@@ -9,8 +9,12 @@ import (
 )
 
 func main() {
-	flagOpts := config.FlagsOptions()
+	flagOpts, err := config.Setup()
+	if err != nil{
+		panic(err)
+	}
 	fmt.Printf("Agent started with options:\nServer: %s\nPollInterval: %d\nReportInterval: %d", flagOpts.AddressServer, flagOpts.PollInterval, flagOpts.ReportInterval)
+	
 	// Инициализация временного хранилища метрик
 	s := metric.NewMetricStorage()
 

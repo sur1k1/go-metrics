@@ -49,7 +49,7 @@ func MetricUpdater(mu MetricUpdaterIntf, flagOpts *config.AgentOptions) {
 	for {
 		mu.UpdateCounter()
 		mu.UpdateGauge()
-		time.Sleep(time.Second*time.Duration(flagOpts.PollInterval))
+		time.Sleep(time.Second*flagOpts.PollInterval)
 	}
 }
 
@@ -108,7 +108,7 @@ func MetricSender(ms MetricSenderIntf, flagOpts *config.AgentOptions) {
 			continue
 		}
 
-		time.Sleep(time.Second*time.Duration(flagOpts.ReportInterval))
+		time.Sleep(time.Second*flagOpts.ReportInterval)
 	}
 }
 
