@@ -37,7 +37,7 @@ func Setup() (*AgentOptions, error) {
 
 	flag.StringVar(&address, "a", "localhost:8080", "server address")
 	flag.Int64Var(&pollInterval, "p", 2, "frequency of polling metrics")
-	flag.Int64Var(&reportInterval, "r", 2, "frequency of sending metrics to the server")
+	flag.Int64Var(&reportInterval, "r", 10, "frequency of sending metrics to the server")
 	flag.Parse()
 
 	switch {
