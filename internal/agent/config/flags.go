@@ -14,5 +14,6 @@ func FlagsOptions() *AgentOptions {
 	flag.Int64Var(&opts.PollInterval, "p", 2, "frequency of polling metrics")
 	flag.Int64Var(&opts.ReportInterval, "r", 10, "frequency of sending metrics to the server")
 	flag.Parse()
+	
 	return &opts
 }
