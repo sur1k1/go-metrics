@@ -16,8 +16,8 @@ type AgentOptions struct {
 
 type Config struct {
 	Address 				string `env:"ADDRESS"`
-	PollInterval 		time.Duration `env:"POLL_INTERVAL"`
-	ReportInterval	time.Duration `env:"REPORT_INTERVAL"`
+	PollInterval 		int64 `env:"POLL_INTERVAL"`
+	ReportInterval	int64 `env:"REPORT_INTERVAL"`
 }
 
 func Setup() (*AgentOptions, error) {
@@ -49,14 +49,14 @@ func Setup() (*AgentOptions, error) {
 
 	switch {
 	case os.Getenv("POLL_INTERVAL") != "":
-		opts.PollInterval = cfg.PollInterval
+		opts.PollInterval = time.Duration(cfg.PollInterval)
 	default:
 		opts.PollInterval = time.Duration(pollInterval)
 	}
 
 	switch {
 	case os.Getenv("REPORT_INTERVAL") != "":
-		opts.ReportInterval = cfg.ReportInterval
+		opts.ReportInterval = time.Duration(cfg.ReportInterval)
 	default:
 		opts.ReportInterval = time.Duration(reportInterval)
 	}
