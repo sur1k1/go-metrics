@@ -1,14 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 
-	"github.com/sur1k1/go-metrics/internal/agent/metric"
 	"github.com/sur1k1/go-metrics/internal/agent/config"
+	"github.com/sur1k1/go-metrics/internal/agent/metric"
 )
 
 func main() {
 	flagOpts := config.FlagsOptions()
+	fmt.Printf("Agent started with options:\nServer: %s\nPollInterval: %d\nReportInterval: %d", flagOpts.AddressServer, flagOpts.PollInterval, flagOpts.ReportInterval)
 	// Инициализация временного хранилища метрик
 	s := metric.NewMetricStorage()
 

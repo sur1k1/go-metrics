@@ -1,12 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/sur1k1/go-metrics/internal/server/config"
 	"github.com/sur1k1/go-metrics/internal/server/handlers"
 	"github.com/sur1k1/go-metrics/internal/server/storage"
-	"github.com/sur1k1/go-metrics/internal/server/config"
 )
 
 func main() {
@@ -29,5 +30,6 @@ func run(router *chi.Mux, serverAddress string) error {
 		Addr: serverAddress,
 		Handler: router,
 	}
+	fmt.Println("Server started:", serverAddress)
 	return srv.ListenAndServe()
 }
