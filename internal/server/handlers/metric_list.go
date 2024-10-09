@@ -21,6 +21,10 @@ func MetricListHandler(s AllMetricsGetter) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(responseBody))
+		_, err := w.Write([]byte(responseBody))
+		if err != nil{
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 }
