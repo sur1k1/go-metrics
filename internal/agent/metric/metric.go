@@ -32,12 +32,6 @@ func NewMetricStorage() *MetricStorage {
 	}
 }
 
-// Описание интерфейса метрик
-type Metric interface {
-	MetricUpdaterIntf
-	MetricSenderIntf
-}
-
 // Интерфейс обновления метрик
 type MetricUpdaterIntf interface {
 	UpdateCounter()
