@@ -11,14 +11,27 @@ const (
 	CounterTypeStr = string("counter")
 )
 
-type Storage interface {
+type UpdateService interface {
 	AddGauge(string, string) error
 	AddCounter(string, string) error
 }
 
+type UpdateHandler struct {
+	Service UpdateService
+}
 
-func Update(s Storage) http.HandlerFunc {
+func NewUpdateHandler(router *chi.Mux, svc UpdateService) {
+	handler := &UpdateHandler{
+		Service: svc,
+	}
+
+	router.Post("/update/{type}/{metric}/{value}", handler.Update())
+}
+
+
+func (s *UpdateHandler) Update() http.HandlerFunc {
 	return func (w http.ResponseWriter, r *http.Request) {
+
 		// Проверка метода отправки запроса
 		if http.MethodPost != r.Method {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -44,7 +57,7 @@ func Update(s Storage) http.HandlerFunc {
 		// Валидация по типу метрики
 		switch metricType {
 		case GaugeTypeStr:
-			err := s.AddGauge(metricName, metricValue)
+			err := s.Service.AddGauge(metricName, metricValue)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				return
@@ -53,7 +66,7 @@ func Update(s Storage) http.HandlerFunc {
 			w.WriteHeader(http.StatusOK)
 			return
 		case CounterTypeStr:
-			err := s.AddCounter(metricName, metricValue)
+			err := s.Service.AddCounter(metricName, metricValue)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				return

@@ -14,7 +14,7 @@ import (
 func TestMetricListHandler(t *testing.T) {
 	tests := []struct {
 		name       string
-		args       AllMetricsGetter
+		args       MetricListService
 		method		string
 		url				string
 		wantStatus int
@@ -38,7 +38,11 @@ func TestMetricListHandler(t *testing.T) {
 	for _, test := range tests{
 		t.Run(test.name, func(t *testing.T) {
 			r := chi.NewRouter()
-			r.Get("/", MetricListHandler(test.args))
+
+			handler := MetricListHandler{
+				Service: test.args,
+			}
+			r.Get("/", handler.ListMetrics())
 
 			ts := httptest.NewServer(r)
 			defer ts.Close()

@@ -8,12 +8,24 @@ import (
 )
 
 // описание интерфейса получения метрик из временного
-type MetricGetter interface {
+type MetricService interface {
 	GetMetric(metricType, metricName string) (string, error)
 }
 
+type MetricHandler struct {
+	Service MetricService
+}
+
+func NewMetricHandler(router *chi.Mux, svc MetricService) {
+	handler := &MetricHandler{
+		Service: svc,
+	}
+
+	router.Get("/value/{type}/{metric}", handler.MetricValue())
+}
+
 // хэндлер обрабатывает входящие данные (тип метрики, имя метрики) и отдает значение
-func MetricHandler(m MetricGetter) http.HandlerFunc {
+func (s *MetricHandler) MetricValue() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		metricType := chi.URLParam(r, "type")
 		if metricType == ""{
@@ -27,7 +39,7 @@ func MetricHandler(m MetricGetter) http.HandlerFunc {
 			return
 		}
 		
-		value, err := m.GetMetric(metricType, metricName)
+		value, err := s.Service.GetMetric(metricType, metricName)
 		if err != nil{
 			w.WriteHeader(http.StatusNotFound)
 			return

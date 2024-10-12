@@ -8,56 +8,57 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
 	"github.com/sur1k1/go-metrics/internal/server/repository/memstorage"
 )
 
 func TestUpdateHandler(t *testing.T) {
 	type args struct {
-		s Storage
+		s storage.MemStorage
 	}
 
 	type header struct {
 		key, value string
 	}
-	
+
 	tests := []struct {
-		name 				string
-		args 				args
-		url 				string
-		header 			header
-		method			string
-		wantStatus 	int
+		name       string
+		args       args
+		url        string
+		header     header
+		method     string
+		wantStatus int
 	}{
 		{
 			name: "simple gauge test #1",
 			args: args{
-				s: &storage.MemStorage{
-					GaugeMap: map[string]float64{},
+				s: storage.MemStorage{
+					GaugeMap:   map[string]float64{},
 					CounterMap: map[string]int64{},
 				},
 			},
 			url: "/update/gauge/alloc/123.0",
 			header: header{
-				key: "Content-Type",
+				key:   "Content-Type",
 				value: "text/plain",
 			},
-			method: "POST",
+			method:     "POST",
 			wantStatus: 200,
 		},
 		{
 			name: "simple counter test",
 			args: args{
-				s: &storage.MemStorage{
-					GaugeMap: map[string]float64{},
+				s: storage.MemStorage{
+					GaugeMap:   map[string]float64{},
 					CounterMap: map[string]int64{},
 				},
 			},
 			url: "/update/counter/pollCount/123",
 			header: header{
-				key: "Content-Type",
+				key:   "Content-Type",
 				value: "text/plain",
 			},
-			method: "POST",
+			method:     "POST",
 			wantStatus: 200,
 		},
 		// {
@@ -79,108 +80,112 @@ func TestUpdateHandler(t *testing.T) {
 		{
 			name: "invalid requst method (GET) test",
 			args: args{
-				s: &storage.MemStorage{
-					GaugeMap: map[string]float64{},
+				s: storage.MemStorage{
+					GaugeMap:   map[string]float64{},
 					CounterMap: map[string]int64{},
 				},
 			},
 			url: "/update/counter/pollCount/123",
 			header: header{
-				key: "Content-Type",
+				key:   "Content-Type",
 				value: "text/plain",
 			},
-			method: "GET",
+			method:     "GET",
 			wantStatus: 405,
 		},
 		{
 			name: "invalid metric name test",
 			args: args{
-				s: &storage.MemStorage{
-					GaugeMap: map[string]float64{},
+				s: storage.MemStorage{
+					GaugeMap:   map[string]float64{},
 					CounterMap: map[string]int64{},
 				},
 			},
 			url: "/update/counter//123",
 			header: header{
-				key: "Content-Type",
+				key:   "Content-Type",
 				value: "text/plain",
 			},
-			method: "POST",
+			method:     "POST",
 			wantStatus: 404,
 		},
 		{
 			name: "invalid value test",
 			args: args{
-				s: &storage.MemStorage{
-					GaugeMap: map[string]float64{},
+				s: storage.MemStorage{
+					GaugeMap:   map[string]float64{},
 					CounterMap: map[string]int64{},
 				},
 			},
 			url: "/update/counter/pollCount/hello_world",
 			header: header{
-				key: "Content-Type",
+				key:   "Content-Type",
 				value: "text/plain",
 			},
-			method: "POST",
+			method:     "POST",
 			wantStatus: 400,
 		},
 		{
 			name: "invalid type metric name test",
 			args: args{
-				s: &storage.MemStorage{
-					GaugeMap: map[string]float64{},
+				s: storage.MemStorage{
+					GaugeMap:   map[string]float64{},
 					CounterMap: map[string]int64{},
 				},
 			},
 			url: "/update/aasdkok/alloc/123",
 			header: header{
-				key: "Content-Type",
+				key:   "Content-Type",
 				value: "text/plain",
 			},
-			method: "POST",
+			method:     "POST",
 			wantStatus: 400,
 		},
 		{
 			name: "invalid url test",
 			args: args{
-				s: &storage.MemStorage{
-					GaugeMap: map[string]float64{},
+				s: storage.MemStorage{
+					GaugeMap:   map[string]float64{},
 					CounterMap: map[string]int64{},
 				},
 			},
 			url: "/update/hi",
 			header: header{
-				key: "Content-Type",
+				key:   "Content-Type",
 				value: "text/plain",
 			},
-			method: "POST",
+			method:     "POST",
 			wantStatus: 404,
 		},
 		{
 			name: "autotest #1",
 			args: args{
-				s: &storage.MemStorage{
-					GaugeMap: map[string]float64{},
+				s: storage.MemStorage{
+					GaugeMap:   map[string]float64{},
 					CounterMap: map[string]int64{},
 				},
 			},
 			url: "/update/counter/testSetGet81/436",
 			header: header{
-				key: "Content-Type",
+				key:   "Content-Type",
 				value: "text/plain",
 			},
-			method: "POST",
+			method:     "POST",
 			wantStatus: 200,
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			r := chi.NewRouter()
-			r.Post("/update/{type}/{metric}/{value}", Update(test.args.s))
+
+			handler := &UpdateHandler{
+				Service: &test.args.s,
+			}
+			r.Post("/update/{type}/{metric}/{value}", handler.Update())
 
 			ts := httptest.NewServer(r)
 			defer ts.Close()
-			
+
 			resp := testRequestUpdateHandler(t, ts, test.method, test.url, test.header.key, test.header.value)
 			defer resp.Body.Close()
 

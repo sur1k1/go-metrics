@@ -6,22 +6,27 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/sur1k1/go-metrics/internal/server/config"
-	"github.com/sur1k1/go-metrics/internal/server/rest"
 	"github.com/sur1k1/go-metrics/internal/server/repository/memstorage"
+	"github.com/sur1k1/go-metrics/internal/server/rest"
+	"github.com/sur1k1/go-metrics/service"
 )
 
 func main() {
 	serverAddress := config.ParseFlags()
 
-	s := storage.NewStorage()
+	// Prepare chi
 	router := chi.NewRouter()
 
+	// Prepare repository
+	s := storage.NewStorage()
 
+	// Build service layer
+	svc := service.NewService(s)
+	rest.NewUpdateHandler(router, svc)
+	rest.NewMetricHandler(router, svc)
+	rest.NewMetricListHandler(router, svc)
 
-	router.Post("/update/{type}/{metric}/{value}", rest.Update(s))
-	router.Get("/value/{type}/{metric}", rest.MetricHandler(s))
-	router.Get("/", rest.MetricListHandler(s))
-
+	// Start server
 	if err := run(router, serverAddress); err != nil{
 		panic(err)
 	}
