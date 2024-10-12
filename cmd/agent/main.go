@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
 	"sync"
 
 	"github.com/sur1k1/go-metrics/internal/agent/config"
@@ -9,6 +12,7 @@ import (
 )
 
 func main() {
+	gracefulShutdown()
 	flagOpts, err := config.Setup()
 	if err != nil{
 		panic(err)
@@ -25,4 +29,14 @@ func main() {
 	go metric.MetricSender(s, flagOpts)
 
 	wg.Wait()
+}
+
+func gracefulShutdown() {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c
+		log.Println("Shutting down gracefully")
+		os.Exit(0)
+	}()
 }

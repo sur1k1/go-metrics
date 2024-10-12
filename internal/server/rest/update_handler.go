@@ -1,4 +1,4 @@
-package handlers
+package rest
 
 import (
 	"net/http"
@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	Gauge = string("gauge")
-	Counter = string("counter")
+	GaugeTypeStr = string("gauge")
+	CounterTypeStr = string("counter")
 )
 
 type Storage interface {
@@ -16,7 +16,8 @@ type Storage interface {
 	AddCounter(string, string) error
 }
 
-func UpdateHandler(s Storage) http.HandlerFunc {
+
+func Update(s Storage) http.HandlerFunc {
 	return func (w http.ResponseWriter, r *http.Request) {
 		// Проверка метода отправки запроса
 		if http.MethodPost != r.Method {
@@ -42,7 +43,7 @@ func UpdateHandler(s Storage) http.HandlerFunc {
 	
 		// Валидация по типу метрики
 		switch metricType {
-		case Gauge:
+		case GaugeTypeStr:
 			err := s.AddGauge(metricName, metricValue)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
@@ -51,7 +52,7 @@ func UpdateHandler(s Storage) http.HandlerFunc {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(http.StatusOK)
 			return
-		case Counter:
+		case CounterTypeStr:
 			err := s.AddCounter(metricName, metricValue)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)

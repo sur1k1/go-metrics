@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	Gauge = string("gauge")
-	Counter = string("counter")
+	GaugeTypeStr = string("gauge")
+	CounterTypeStr = string("counter")
 )
 
 type MemStorage struct {
@@ -48,14 +48,14 @@ func (s *MemStorage) AddCounter(metricName, value string) error {
 
 func (s *MemStorage) GetMetric(metricType, metricName string) (string, error) {
 	switch metricType{
-	case Gauge:
+	case GaugeTypeStr:
 		value, ok := s.GaugeMap[strings.ToLower(metricName)]
 		if !ok {
 			return "", errors.New("metric not found")
 		}
 
 		return strconv.FormatFloat(value, 'f', -1, 64), nil
-	case Counter:
+	case CounterTypeStr:
 		value, ok := s.CounterMap[strings.ToLower(metricName)]
 		if !ok {
 			return "", errors.New("metric not found")

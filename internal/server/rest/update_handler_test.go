@@ -1,4 +1,4 @@
-package handlers
+package rest
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/sur1k1/go-metrics/internal/server/storage"
+	"github.com/sur1k1/go-metrics/internal/server/repository/memstorage"
 )
 
 func TestUpdateHandler(t *testing.T) {
@@ -176,7 +176,7 @@ func TestUpdateHandler(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			r := chi.NewRouter()
-			r.Post("/update/{type}/{metric}/{value}", UpdateHandler(test.args.s))
+			r.Post("/update/{type}/{metric}/{value}", Update(test.args.s))
 
 			ts := httptest.NewServer(r)
 			defer ts.Close()

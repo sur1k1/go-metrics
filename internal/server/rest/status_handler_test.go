@@ -1,4 +1,4 @@
-package handlers
+package rest
 
 import (
 	"net/http"
@@ -8,42 +8,50 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/sur1k1/go-metrics/internal/server/storage"
+	"github.com/sur1k1/go-metrics/internal/server/repository/memstorage"
 )
 
-func TestMetricListHandler(t *testing.T) {
-	tests := []struct {
-		name       string
-		args       AllMetricsGetter
-		method		string
-		url				string
+func TestMetricHandler(t *testing.T) {
+	tests := []struct{
+		name string
+		args MetricGetter
+		url string
 		wantStatus int
+		method string
 	}{
 		{
 			name: "positive test #1",
 			args: &storage.MemStorage{
-				GaugeMap: map[string]float64{
-					"alloc": 123.0,
-				},
 				CounterMap: map[string]int64{
 					"pollcount": 123,
 				},
 			},
 			method: "GET",
-			url: "/",
+			url: "/value/counter/pollcount",
 			wantStatus: 200,
+		},
+		{
+			name: "autotest 404",
+			args: &storage.MemStorage{
+				CounterMap: map[string]int64{
+					"pollcount": 123,
+				},
+			},
+			method: "GET",
+			url: "/value/gauge/testSetGet203",
+			wantStatus: 404,
 		},
 	}
 
 	for _, test := range tests{
 		t.Run(test.name, func(t *testing.T) {
 			r := chi.NewRouter()
-			r.Get("/", MetricListHandler(test.args))
+			r.Get("/value/{type}/{metric}", MetricHandler(test.args))
 
 			ts := httptest.NewServer(r)
 			defer ts.Close()
 
-			resp := testRequestMetricListHandler(t, ts, test.method, test.url)
+			resp := testRequestMetricHandler(t, ts, test.method, test.url)
 			defer resp.Body.Close()
 
 			assert.Equal(t, test.wantStatus, resp.StatusCode)
@@ -51,8 +59,9 @@ func TestMetricListHandler(t *testing.T) {
 	}
 }
 
-func testRequestMetricListHandler(t *testing.T, ts *httptest.Server, method, path string) *http.Response {
+func testRequestMetricHandler(t *testing.T, ts *httptest.Server, method, path string) *http.Response {
 	req, err := http.NewRequest(method, ts.URL+path, nil)
+
 	require.NoError(t, err)
 
 	resp, err := ts.Client().Do(req)
