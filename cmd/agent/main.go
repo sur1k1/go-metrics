@@ -15,7 +15,8 @@ func main() {
 	gracefulShutdown()
 	flagOpts, err := config.Setup()
 	if err != nil{
-		panic(err)
+		fmt.Fprintln(os.Stderr, err)
+    os.Exit(1)
 	}
 	fmt.Printf("Agent started with options:\nServer: %s\nPollInterval: %d\nReportInterval: %d", flagOpts.AddressServer, flagOpts.PollInterval, flagOpts.ReportInterval)
 	

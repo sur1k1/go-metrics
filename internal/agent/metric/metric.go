@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	reportForm			string = "http://%s/update/%s/%s/%v"
-	typeGauge				string = "gauge"
-	typeCounter			string = "counter"
+	reportForm	string = "http://%s/update/%s/%s/%v"
+	typeGauge		string = "gauge"
+	typeCounter	string = "counter"
 )
 
 // Временное хранилище метрик

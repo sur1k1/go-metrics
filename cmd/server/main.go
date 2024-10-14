@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/sur1k1/go-metrics/internal/server/config"
@@ -28,7 +29,8 @@ func main() {
 
 	// Start server
 	if err := run(router, serverAddress); err != nil{
-		panic(err)
+		fmt.Fprintln(os.Stderr, err)
+    os.Exit(1)
 	}
 }
 
