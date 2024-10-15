@@ -43,7 +43,7 @@ func TestMetricListHandler(t *testing.T) {
 			handler := MetricListHandler{
 				Service: test.args,
 			}
-			r.Get("/", handler.ListMetrics())
+			r.Get("/", handler.ListMetrics)
 
 			ts := httptest.NewServer(r)
 			defer ts.Close()

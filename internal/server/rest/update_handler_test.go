@@ -181,7 +181,7 @@ func TestUpdateHandler(t *testing.T) {
 			handler := &UpdateHandler{
 				Service: &test.args.s,
 			}
-			r.Post("/update/{type}/{metric}/{value}", handler.Update())
+			r.Post("/update/{type}/{metric}/{value}", handler.Update)
 
 			ts := httptest.NewServer(r)
 			defer ts.Close()

@@ -20,25 +20,23 @@ func NewMetricListHandler(router *chi.Mux, svc MetricListService) {
 		Service: svc,
 	}
 
-	router.Get("/", handler.ListMetrics())
+	router.Get("/", handler.ListMetrics)
 }
 
-func (s *MetricListHandler) ListMetrics() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		responseBody := "Metrics List:\n"
+func (s *MetricListHandler) ListMetrics(w http.ResponseWriter, r *http.Request) {
+	responseBody := "Metrics List:\n"
 
-		metrics := s.Service.GetAllMetrics()
+	metrics := s.Service.GetAllMetrics()
 
-		for name, value := range metrics {
-			responseBody += fmt.Sprintf("%s: %s\n", name, value)
-		}
+	for name, value := range metrics {
+		responseBody += fmt.Sprintf("%s: %s\n", name, value)
+	}
 
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		_, err := w.Write([]byte(responseBody))
-		if err != nil{
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte(responseBody))
+	if err != nil{
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 }

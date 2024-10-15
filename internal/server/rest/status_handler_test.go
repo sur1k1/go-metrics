@@ -51,7 +51,7 @@ func TestMetricHandler(t *testing.T) {
 			handler := MetricHandler{
 				Service: test.args,
 			}
-			r.Get("/value/{type}/{metric}", handler.MetricValue())
+			r.Get("/value/{type}/{metric}", handler.MetricValue)
 
 			ts := httptest.NewServer(r)
 			defer ts.Close()

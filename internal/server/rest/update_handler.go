@@ -25,58 +25,54 @@ func NewUpdateHandler(router *chi.Mux, svc UpdateService) {
 		Service: svc,
 	}
 
-	router.Post("/update/{type}/{metric}/{value}", handler.Update())
+	router.Post("/update/{type}/{metric}/{value}", handler.Update)
 }
 
+func (s *UpdateHandler) Update(w http.ResponseWriter, r *http.Request) {
+	// Проверка метода отправки запроса
+	if http.MethodPost != r.Method {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
 
-func (s *UpdateHandler) Update() http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request) {
+	// // Проверка параметра content-type
+	// if r.Header.Get("Content-Type") != "text/plain" {
+	// 	w.WriteHeader(http.StatusUnsupportedMediaType)
+	// 	return
+	// }
 
-		// Проверка метода отправки запроса
-		if http.MethodPost != r.Method {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-	
-		// // Проверка параметра content-type
-		// if r.Header.Get("Content-Type") != "text/plain" {
-		// 	w.WriteHeader(http.StatusUnsupportedMediaType)
-		// 	return
-		// }
+	metricType := chi.URLParam(r, "type")
+	metricName := chi.URLParam(r, "metric")
+	metricValue := chi.URLParam(r, "value")
 
-		metricType := chi.URLParam(r, "type")
-		metricName := chi.URLParam(r, "metric")
-		metricValue := chi.URLParam(r, "value")
-	
-		// Валидация имени метрики
-		if metricName == "" {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-	
-		// Валидация по типу метрики
-		switch metricType {
-		case GaugeTypeStr:
-			err := s.Service.AddGauge(metricName, metricValue)
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				return
-			}
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.WriteHeader(http.StatusOK)
-			return
-		case CounterTypeStr:
-			err := s.Service.AddCounter(metricName, metricValue)
-			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				return
-			}
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.WriteHeader(http.StatusOK)
-			return
-		default:
+	// Валидация имени метрики
+	if metricName == "" {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	// Валидация по типу метрики
+	switch metricType {
+	case GaugeTypeStr:
+		err := s.Service.AddGauge(metricName, metricValue)
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		return
+	case CounterTypeStr:
+		err := s.Service.AddCounter(metricName, metricValue)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		return
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 }
