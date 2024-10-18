@@ -45,9 +45,7 @@ func Logger(log *zap.Logger) func(next http.Handler) http.Handler {
 		}
 
 			next.ServeHTTP(&lw, r)
-
 			handlingTime := time.Since(start)
-
 			log.Info(
 				"got incoming HTTP request",
 				zap.String("uri", r.RequestURI),
